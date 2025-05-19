@@ -1,4 +1,7 @@
 
+using SIPECA.Dominio.Generadores;
+using SIPECA.Dominio.Interfaces;
+
 namespace SIPECA.API;
 
 public class Program
@@ -13,6 +16,9 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        // Mis inyecciones
+        builder.Services.AddSingleton<IGenerador, CongruencialMixto>();
 
         var app = builder.Build();
 

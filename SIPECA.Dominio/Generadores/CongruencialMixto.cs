@@ -21,10 +21,7 @@ public class CongruencialMixto : IGenerador
         M = m;
     }
 
-    public CongruencialMixto()
-    {
-        
-    }
+    public CongruencialMixto() { }
 
     public double GenerarU()
     {

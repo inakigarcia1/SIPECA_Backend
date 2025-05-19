@@ -6,12 +6,7 @@ using System.Threading.Tasks;
 using SIPECA.Dominio.Interfaces;
 
 namespace SIPECA.Dominio.Distribuciones;
-public abstract class DistribucionBase
+public abstract class DistribucionBase(IGenerador generador)
 {
-    protected IGenerador Generador { get; init; }
-
-    protected DistribucionBase(IGenerador generador)
-    {
-        Generador = generador;
-    }
+    protected IGenerador Generador { get; init; } = generador;
 }

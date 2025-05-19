@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Sources;
 
-namespace GeneradoresYPruebas.Dominio.Pruebas;
+namespace SIPECA.Dominio.PruebasEstadisticas;
 public class Frecuencia
 {
     public static (bool esAleatorio, double estadistico) EsAleatorio(double x, double comparador, params double[] valoresU)
@@ -36,7 +36,7 @@ public class Frecuencia
             sumatoria += Math.Pow(observacion.Value - frecuenciaEsperada, 2);
         }
 
-        var chiCuadrado = ((double)x / n) * sumatoria;
+        var chiCuadrado = (double)x / n * sumatoria;
 
         return (chiCuadrado < comparador, chiCuadrado);
     }

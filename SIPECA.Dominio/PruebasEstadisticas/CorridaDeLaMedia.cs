@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GeneradoresYPruebas.Dominio.Pruebas
+namespace SIPECA.Dominio.PruebasEstadisticas
 {
     public static class CorridaDeLaMedia
     {

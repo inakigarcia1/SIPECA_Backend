@@ -6,34 +6,29 @@ using System.Threading.Tasks;
 using SIPECA.Dominio.Interfaces;
 
 namespace SIPECA.Dominio.Distribuciones.Discretas;
-public class Binomial(IGenerador generador) : DistribucionBase(generador)
+public class Binomial(IGenerador generador, List<Tuple<double, Action>> alternativas)
+    : DistribucionBase(generador)
 {
-    public void RealizarProcedimientoBinomial(List<Tuple<double, Action>> alternativas)
+    public List<Tuple<double, Action>> Acumuladas { get; init; } = CrearAcumuladas(alternativas);
+
+    public void RealizarProcedimientoBinomial()
     {
-        var acumuladas = CrearAcumuladas(alternativas);
-
-
         var u = Generador.GenerarU();
-
-
+        Acumuladas.First(a => a.Item1 <= u).Item2.Invoke();
     }
 
-    private List<Tuple<double, Action>> CrearAcumuladas(List<Tuple<double, Action>> alternativas)
+    private static List<Tuple<double, Action>> CrearAcumuladas(List<Tuple<double, Action>> alternativas)
     {
-        var acumuladas = new List<double>();
-        acumuladas.Add(alternativas[0].Item1);
+        var acumuladas = new List<double>
+        {
+            alternativas[0].Item1
+        };
 
-        for (int i = 1; i < alternativas.Count; i++)
+        for (var i = 1; i < alternativas.Count; i++)
         {
             acumuladas.Add(alternativas[i].Item1 + acumuladas[i - 1]);
         }
 
-        var acumuladasFinal = new List<Tuple<double, Action>>();
-        for (int i = 0; i < alternativas.Count; i++)
-        {
-            acumuladasFinal.Add(new Tuple<double, Action>(acumuladas[i], alternativas[i].Item2));
-        }
-
-        return acumuladasFinal;
+        return alternativas.Select((t, i) => new Tuple<double, Action>(acumuladas[i], t.Item2)).ToList();
     }
 }

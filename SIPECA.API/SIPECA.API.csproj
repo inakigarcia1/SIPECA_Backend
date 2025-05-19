@@ -13,4 +13,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SIPECA.Aplicacion\SIPECA.Aplicacion.csproj" />
+    <ProjectReference Include="..\SIPECA.Dominio\SIPECA.Dominio.csproj" />
+  </ItemGroup>
+
 </Project>

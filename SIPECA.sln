@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIPECA.Dominio", "SIPECA.Dominio\SIPECA.Dominio.csproj", "{424C88E8-D0DE-4FEB-8BD8-229B3AD11ADB}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04. Infraestructura", "04. Infraestructura", "{E3D17756-6BCE-46BE-B387-6CE7737AF93C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIPECA.API", "SIPECA.API\SIPECA.API.csproj", "{C2E3C0E3-D1A4-4CC2-9A70-8A13E85FC3F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIPECA.Aplicacion", "SIPECA.Aplicacion\SIPECA.Aplicacion.csproj", "{6C651705-729E-4244-BE3E-A06D7C458DD6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{C2E3C0E3-D1A4-4CC2-9A70-8A13E85FC3F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2E3C0E3-D1A4-4CC2-9A70-8A13E85FC3F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2E3C0E3-D1A4-4CC2-9A70-8A13E85FC3F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C651705-729E-4244-BE3E-A06D7C458DD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C651705-729E-4244-BE3E-A06D7C458DD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C651705-729E-4244-BE3E-A06D7C458DD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C651705-729E-4244-BE3E-A06D7C458DD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -36,6 +42,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{424C88E8-D0DE-4FEB-8BD8-229B3AD11ADB} = {AC2D7953-8175-48DF-9DEA-95F7D76C04DC}
 		{C2E3C0E3-D1A4-4CC2-9A70-8A13E85FC3F8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{6C651705-729E-4244-BE3E-A06D7C458DD6} = {E8609CFB-92EC-4947-89F7-22529351334F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2049EF64-07B1-43EA-853F-8B91E8FFA9FC}

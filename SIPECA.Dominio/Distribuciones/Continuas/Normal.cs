@@ -10,14 +10,14 @@ public class Normal(IGenerador generador) : DistribucionBase(generador)
 {
     public double GenerarVariableAleatoria(double media, double desviacion)
     {
-        double suma = 0.0;
+        var suma = 0.0;
 
-        for (int i = 1; i <= 12; i++)
+        for (var i = 1; i <= 12; i++)
         {
             suma += Generador.GenerarU();
         }
 
-        double z = suma - 6.0;
+        var z = suma - 6.0;
         return desviacion * z + media;
     }
 

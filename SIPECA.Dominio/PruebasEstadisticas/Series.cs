@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GeneradoresYPruebas.Dominio.Pruebas
+namespace SIPECA.Dominio.PruebasEstadisticas
 {
     public class Series
     {
         public static (bool esAleatorio, double estadistico) EsAleatorio(double x, double comparador, double n, params double[] valoresU)
         {
             int xCuadrado = (int)(x * x);
-            double frecuenciaEsperada = n / (double)xCuadrado;
+            double frecuenciaEsperada = n / xCuadrado;
 
             var frecuencias = new Dictionary<(int, int), int>();
 
@@ -37,7 +37,7 @@ namespace GeneradoresYPruebas.Dominio.Pruebas
                 sumatoria += Math.Pow(frecuencia - frecuenciaEsperada, 2);
             }
 
-            double chiCuadrado = (xCuadrado / (double)n) * sumatoria;
+            double chiCuadrado = xCuadrado / (double)n * sumatoria;
 
             return (chiCuadrado < comparador, chiCuadrado);
         }

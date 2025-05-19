@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System;
 using System.Linq;
 
-namespace GeneradoresYPruebas.Dominio.Pruebas
+namespace SIPECA.Dominio.PruebasEstadisticas
 {
     public static class Ks
     {
