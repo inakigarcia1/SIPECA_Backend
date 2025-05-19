@@ -3,26 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GeneradoresYPruebas.Dominio.Generadores;
+using SIPECA.Dominio.Interfaces;
 
-namespace GeneradoresYPruebas.Generadores;
-public class CongruencialMixto
+namespace SIPECA.Dominio.Generadores;
+public class CongruencialMixto : IGenerador
 {
-    public static List<double> ObtenerNumerosAleatorios(double semilla, double a, double c, double m, double cantidadDeNumerosAGenerar)
+    public double Semilla { get; private set; } = 12346d;
+    public double A { get; init; } = 1103515245d;
+    public double C { get; init; } = 12345d;
+    public double M { get; init; } = 2147483648d;
+
+    public CongruencialMixto(double semilla, double a, double c, double m)
     {
-        var numerosAleatorios = new List<double>();
-
-        for (double i = 0; i < cantidadDeNumerosAGenerar; i++)
-        {
-            semilla = (double) ObtenerSiguienteResto(semilla, a, c, m);
-            numerosAleatorios.Add(Math.Round((double)semilla / m, 6));
-        }
-
-        return numerosAleatorios;
+        Semilla = semilla;
+        A = a;
+        C = c;
+        M = m;
     }
 
-    private static double ObtenerSiguienteResto(double restoPrevio, double a, double c, double m)
+    public CongruencialMixto()
     {
-        return (a * restoPrevio + c) % m;
+        
+    }
+
+    public double GenerarU()
+    {
+        Semilla = (A * Semilla + C) % M;
+        return Math.Round(Semilla / M, 6);
     }
 }
