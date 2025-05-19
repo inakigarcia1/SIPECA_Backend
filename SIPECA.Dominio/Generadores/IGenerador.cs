@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SIPECA.Dominio.Interfaces;
+namespace SIPECA.Dominio.Generadores;
 public interface IGenerador
 {
     double GenerarU();

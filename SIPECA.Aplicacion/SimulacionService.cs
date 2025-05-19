@@ -2,7 +2,6 @@
 using SIPECA.Dominio.Distribuciones.Continuas;
 using SIPECA.Dominio.Distribuciones.Discretas;
 using SIPECA.Dominio.Generadores;
-using SIPECA.Dominio.Interfaces;
 
 namespace SIPECA.Aplicacion;
 
