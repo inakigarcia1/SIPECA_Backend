@@ -11,10 +11,13 @@ public class Binomial(IGenerador generador, List<Tuple<double, Action>> alternat
 {
     public List<Tuple<double, Action>> Acumuladas { get; init; } = CrearAcumuladas(alternativas);
 
-    public void RealizarProcedimientoBinomial()
+    public void RealizarProcedimientoBinomial(int cantidadIteraciones = 1)
     {
-        var u = Generador.GenerarU();
-        Acumuladas.First(a => a.Item1 <= u).Item2.Invoke();
+        for (int i = 0; i < cantidadIteraciones; i++)
+        {
+            var u = Generador.GenerarU();
+            Acumuladas.First(a => a.Item1 <= u).Item2.Invoke();
+        }
     }
 
     private static List<Tuple<double, Action>> CrearAcumuladas(List<Tuple<double, Action>> alternativas)
@@ -29,6 +32,6 @@ public class Binomial(IGenerador generador, List<Tuple<double, Action>> alternat
             acumuladas.Add(alternativas[i].Item1 + acumuladas[i - 1]);
         }
 
-        return alternativas.Select((t, i) => new Tuple<double, Action>(acumuladas[i], t.Item2)).ToList();
+        return [.. alternativas.Select((t, i) => new Tuple<double, Action>(acumuladas[i], t.Item2))];
     }
 }
