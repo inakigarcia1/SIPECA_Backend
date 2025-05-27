@@ -12,6 +12,7 @@ public class SimulacionService
     private readonly Exponencial _distribucionExponencial = new(Generador);
     private readonly Poisson _distribucionPoisson = new(Generador);
     private readonly Uniforme _distribucionUniforme = new(Generador);
+    // La distribución binomial se instancia por cada caso
     public static ResultadosSimulacion Simular(ParametrosSimulacion parametros)
     {
         // Lógica de simulación
