@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 using SIPECA.Dominio.Generadores;
 
 namespace SIPECA.Dominio.Distribuciones.Discretas;
-public class Binomial(IGenerador generador, List<Tuple<double, Action>> alternativas)
+public class Binomial(IGenerador generador, List<Tuple<double, Action?>> alternativas)
     : DistribucionBase(generador)
 {
-    public List<Tuple<double, Action>> Acumuladas { get; init; } = CrearAcumuladas(alternativas);
+    public List<Tuple<double, Action?>> Acumuladas { get; init; } = CrearAcumuladas(alternativas);
 
-    public void RealizarProcedimientoBinomial(int cantidadIteraciones = 1)
+    public void RealizarProcedimientoBinomial(double cantidadIteraciones = 1)
     {
         for (int i = 0; i < cantidadIteraciones; i++)
         {
             var u = Generador.GenerarU();
-            Acumuladas.First(a => a.Item1 <= u).Item2.Invoke();
+            Acumuladas.First(a => u <= a.Item1).Item2?.Invoke();
         }
     }
 
-    private static List<Tuple<double, Action>> CrearAcumuladas(List<Tuple<double, Action>> alternativas)
+    private static List<Tuple<double, Action?>> CrearAcumuladas(List<Tuple<double, Action>> alternativas)
     {
         var acumuladas = new List<double>
         {

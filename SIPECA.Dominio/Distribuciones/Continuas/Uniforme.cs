@@ -8,8 +8,8 @@ using SIPECA.Dominio.Generadores;
 namespace SIPECA.Dominio.Distribuciones.Continuas;
 public class Uniforme(IGenerador generador) : DistribucionBase(generador)
 {
-    public double GenerarVariableAleatoria(double a, double b)
+    public double GenerarVariableAleatoria(double a, double b, bool truncar = true)
     {
-        return a + (b - a) * Generador.GenerarU();
+        return truncar? Math.Truncate(a + (b - a) * Generador.GenerarU()) : a + (b - a) * Generador.GenerarU();
     }
 }
