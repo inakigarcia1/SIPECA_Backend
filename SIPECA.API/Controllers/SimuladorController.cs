@@ -1,15 +1,14 @@
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
 using SIPECA.Aplicacion;
-using SIPECA.Aplicacion.DTOs;
+using SIPECA.Aplicacion.DTOs.Request;
 using SIPECA.Dominio.Distribuciones.Continuas;
 using SIPECA.Dominio.Distribuciones.Discretas;
-using SIPECA.Dominio.Interfaces;
 
 namespace SIPECA.API.Controllers;
 
 [ApiController]
-[Route("simulador")]
+[Route("sipeca")]
 public class SimuladorController: ControllerBase
 {
     [HttpPost("simular")]

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using SIPECA.Dominio.Generadores;
 
 namespace SIPECA.Dominio.Distribuciones.Discretas;
-public class Binomial(IGenerador generador, List<Tuple<double, Action?>> alternativas)
+public class Binomial(IGenerador generador, List<Tuple<double, Action>> alternativas)
     : DistribucionBase(generador)
 {
-    public List<Tuple<double, Action?>> Acumuladas { get; init; } = CrearAcumuladas(alternativas);
+    public List<Tuple<double, Action>> Acumuladas { get; init; } = CrearAcumuladas(alternativas);
 
     public void RealizarProcedimientoBinomial(double cantidadIteraciones = 1)
     {
@@ -20,7 +20,7 @@ public class Binomial(IGenerador generador, List<Tuple<double, Action?>> alterna
         }
     }
 
-    private static List<Tuple<double, Action?>> CrearAcumuladas(List<Tuple<double, Action>> alternativas)
+    private static List<Tuple<double, Action>> CrearAcumuladas(List<Tuple<double, Action>> alternativas)
     {
         var acumuladas = new List<double>
         {
