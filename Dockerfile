@@ -20,4 +20,4 @@ RUN dotnet publish "SIPECA.API.csproj" -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "LatExcel.Api.dll"]
+ENTRYPOINT ["dotnet", "SIPECA.API.dll"]
