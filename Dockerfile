@@ -8,22 +8,16 @@ COPY ["SIPECA.sln", "./"]
 COPY ["SIPECA.API/SIPECA.API.csproj", "SIPECA.API/"]
 COPY ["SIPECA.Aplicacion/SIPECA.Aplicacion.csproj", "SIPECA.Aplicacion/"]
 COPY ["SIPECA.Dominio/SIPECA.Dominio.csproj", "SIPECA.Dominio/"]
+RUN dotnet restore "SIPECA.sln"
 
 
-
-
-RUN dotnet restore "./SIPECA.API/SIPECA.API.csproj"
+# Copiar resto de archivos y compilar
 COPY . .
 WORKDIR "/src/SIPECA.API"
-RUN dotnet build "./SIPECA.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet publish "SIPECA.API.csproj" -c Release -o /app/publish
 
-# This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./SIPECA.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
+# Etapa de ejecución
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "SIPECA.API.dll"]
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "LatExcel.Api.dll"]
