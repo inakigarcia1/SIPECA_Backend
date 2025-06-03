@@ -75,6 +75,7 @@ public class SimulacionService
             if (aplicarQuimicos) cantidadHuevos = FiltrarPorInsecticida(cantidadHuevos, generacion);
 
             plagas.cantidadHembras = DividirSexos(cantidadHuevos).cantidadHembras;
+            if (plagas.cantidadHembras == 0) plagas.cantidadHembras = 1; // Aseguramos que haya al menos una hembra para la simulación
 
             var diaGeneracion = 0d;
 
