@@ -8,7 +8,7 @@ using SIPECA.Dominio.Generadores;
 namespace SIPECA.Dominio.Distribuciones.Continuas;
 public class Normal(IGenerador generador) : DistribucionBase(generador)
 {
-    public double GenerarVariableAleatoria(double media, double desviacion)
+    public double GenerarVariableAleatoria(double media, double desviacion, bool truncar = true)
     {
         var suma = 0.0;
 
@@ -18,7 +18,7 @@ public class Normal(IGenerador generador) : DistribucionBase(generador)
         }
 
         var z = suma - 6.0;
-        return desviacion * z + media;
+        return truncar ? Math.Truncate(desviacion * z + media) : desviacion * z + media;
     }
 
 }

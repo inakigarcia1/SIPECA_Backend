@@ -33,7 +33,7 @@ public class SimulacionService
         var perasSanas = 0d;
         var perasInfectadas = 0d;
         var perasTotales = 0d;
-        var peralesSanos = plantasPorHectarea * (cantidadHectareas - hectareasInfectadas);
+        var gananciaTotal = 0d;
         var peralesInfectados = 0d;
 
         var pesoTotalDePeras = 0d;
@@ -47,7 +47,6 @@ public class SimulacionService
 
         for (int generacion = 1; generacion <= 3; generacion++)
         {
-            var hectareasInfectadasGeneracion = 0;
             double cantidadHuevos = 0;
             for (int i = 0; i < plagas.cantidadHembras; i++)
             {
@@ -74,46 +73,59 @@ public class SimulacionService
             {
                 if (generacion != 1)
                 {
+                    int indicePlanta = 0;
                     foreach (var peras in perasEnPlantas.Where(p => cantidadHuevos - p.Item1 >= 0))
                     {
                         // Dañar la planta
-                        peralesSanos -= 1;
                         perasInfectadas += peras.Item1;
                         pesoPerasInfectadas += peras.Item2;
-                        peralesInfectados++;
+                        peralesInfectados += cantidadHuevos / peras.Item1;
+                        if (cantidadHuevos - peras.Item1 < 0) continue;
                         cantidadHuevos -= peras.Item1;
+                        indicePlanta++;
 
                         if (peralesInfectados >= plantasPorHectarea * cantidadHectareas) break;
                     }
+                    perasEnPlantas.RemoveRange(0, indicePlanta);
                     continue;
                 }
 
                 for (int j = 0; j < plantasPorHectarea; j++)
                 {
                     var perasPorPlanta = DistribucionUniforme.GenerarVariableAleatoria(70, 100);
-                    perasTotales += perasPorPlanta;
                     var pesoPera = DistribucionUniforme.GenerarVariableAleatoria(0.120, 0.250, truncar: false);
-                    perasEnPlantas.Add(new Tuple<double, double>(perasPorPlanta, pesoPera));
+
+                    perasTotales += perasPorPlanta;
                     var pesoPerasPlanta = pesoPera * perasPorPlanta;
+                    perasEnPlantas.Add(new Tuple<double, double>(perasPorPlanta, pesoPerasPlanta));
                     pesoTotalDePeras += pesoPerasPlanta;
 
-                    if (cantidadHuevos - perasPorPlanta < 0) continue;
-
                     // Dañar la planta
-                    peralesSanos -= 1;
                     perasInfectadas += perasPorPlanta;
                     pesoPerasInfectadas += pesoPerasPlanta;
-                    peralesInfectados++;
+                    peralesInfectados += cantidadHuevos / perasPorPlanta;
+
+                    if (cantidadHuevos - perasPorPlanta < 0) continue;
                     cantidadHuevos -= perasPorPlanta;
 
                     if (peralesInfectados >= plantasPorHectarea * cantidadHectareas) break;
                 }
+                gananciaTotal = pesoTotalDePeras * precioPeraPorTonelada / 1000;
             }
 
             hectareasInfectadas += peralesInfectados / plantasPorHectarea;
 
             var pesoPerasSanas = pesoTotalDePeras - pesoPerasInfectadas;
             perasSanas = perasTotales - perasInfectadas;
+
+            if (pesoPerasSanas < 0 || perasSanas < 0)
+            {
+                pesoPerasSanas = 0;
+                pesoPerasInfectadas = pesoTotalDePeras;
+                perasSanas = 0;
+                perasInfectadas = perasTotales;
+            }
+
             var ultimo = ResultadosPorGeneracion.LastOrDefault();
 
             ResultadosPorGeneracion.Add(new ResultadosGeneracion()
@@ -131,6 +143,7 @@ public class SimulacionService
             });
 
             if (hectareasInfectadas < cantidadHectareas) continue;
+
             hectareasInfectadas = cantidadHectareas;
             perasInfectadas = perasTotales;
             if (ultimo is not null)
