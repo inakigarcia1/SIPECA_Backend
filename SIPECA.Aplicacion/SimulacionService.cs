@@ -23,7 +23,7 @@ public class SimulacionService
         double cantidadHectareas = parametros.CantidadHectareas;
         var precioPeraPorTonelada = parametros.PrecioPera;
         var hectareasInfectadas = parametros.HectareasInfectadas;
-        double plantasPorHectarea = parametros.PlantasPorHectarea;
+        double peralesPorHectarea = parametros.PlantasPorHectarea;
         bool aplicarQuimicos = parametros.AplicarQuimicos;
         bool aplicarFeromonas = parametros.AplicarFeromonas;
         var costoQuimicoPorHectarea = parametros.CostoTratamientoQuimicoPorHectarea;
@@ -35,15 +35,31 @@ public class SimulacionService
         var perasTotales = 0d;
         var gananciaTotal = 0d;
         var peralesInfectados = 0d;
-
         var pesoTotalDePeras = 0d;
         var pesoPerasInfectadas = 0d;
-
         var dia = 0d;
+        var plagas = ObtenerPlagas(hectareasInfectadas, peralesPorHectarea);
+        var peralesTotales = cantidadHectareas * peralesPorHectarea;
 
-        var plagas = ObtenerPlagas(hectareasInfectadas, plantasPorHectarea);
+        if (plagas.cantidadHembras == 0) plagas.cantidadHembras = 1; // Aseguramos que haya al menos una hembra para la simulación
 
-        var perasEnPlantas = new List<Tuple<double, double>>();
+        var perasEnPlantas = new List<Tuple<double, double>>(); // Acá se almacenan todas las plantas y los pesos de sus peras
+
+        // Recorrer lo sano y guardar las plantas
+        var hectareasSanas = cantidadHectareas - hectareasInfectadas;
+        for (int i = 0; i < hectareasSanas; i++)
+        {
+            for (int j = 0; j < peralesPorHectarea; j++)
+            {
+                var perasPorPlanta = DistribucionUniforme.GenerarVariableAleatoria(70, 100);
+                var pesoPera = DistribucionUniforme.GenerarVariableAleatoria(0.120, 0.250, truncar: false);
+                var pesoPerasPlanta = pesoPera * perasPorPlanta;
+                perasEnPlantas.Add(new Tuple<double, double>(perasPorPlanta, pesoPerasPlanta));
+
+                perasTotales += perasPorPlanta;
+                pesoTotalDePeras += pesoPerasPlanta;
+            }
+        }
 
         for (int generacion = 1; generacion <= 3; generacion++)
         {
@@ -68,90 +84,79 @@ public class SimulacionService
 
             dia += diaGeneracion;
 
+            /*
+             Recorrer las plantas y dañarlas.
+                Item1 = cantidad de peras en la planta
+                Item2 = peso de todas las peras de esa planta
+             */
 
-            for (int i = 0; i < cantidadHectareas - hectareasInfectadas; i++)
+            var perasEnPlantasCopia = new List<Tuple<double, double>>(perasEnPlantas);
+            foreach (var planta in perasEnPlantasCopia.TakeWhile(peras => cantidadHuevos != 0))
             {
-                if (generacion != 1)
+                double perasDañadasDelPeral;
+                if (cantidadHuevos - planta.Item1 < 0) // Dañar parcialmente la planta
                 {
-                    int indicePlanta = 0;
-                    foreach (var peras in perasEnPlantas.Where(p => cantidadHuevos - p.Item1 >= 0))
-                    {
-                        // Dañar la planta
-                        perasInfectadas += peras.Item1;
-                        pesoPerasInfectadas += peras.Item2;
-                        peralesInfectados += cantidadHuevos / peras.Item1;
-                        if (cantidadHuevos - peras.Item1 < 0) continue;
-                        cantidadHuevos -= peras.Item1;
-                        indicePlanta++;
-
-                        if (peralesInfectados >= plantasPorHectarea * cantidadHectareas) break;
-                    }
-                    perasEnPlantas.RemoveRange(0, indicePlanta);
-                    continue;
+                    perasInfectadas += cantidadHuevos;
+                    perasDañadasDelPeral = cantidadHuevos;
+                    cantidadHuevos = 0;
                 }
-
-                for (int j = 0; j < plantasPorHectarea; j++)
+                else // Dañar completamente la planta
                 {
-                    var perasPorPlanta = DistribucionUniforme.GenerarVariableAleatoria(70, 100);
-                    var pesoPera = DistribucionUniforme.GenerarVariableAleatoria(0.120, 0.250, truncar: false);
-
-                    perasTotales += perasPorPlanta;
-                    var pesoPerasPlanta = pesoPera * perasPorPlanta;
-                    perasEnPlantas.Add(new Tuple<double, double>(perasPorPlanta, pesoPerasPlanta));
-                    pesoTotalDePeras += pesoPerasPlanta;
-
-                    // Dañar la planta
-                    perasInfectadas += perasPorPlanta;
-                    pesoPerasInfectadas += pesoPerasPlanta;
-                    peralesInfectados += cantidadHuevos / perasPorPlanta;
-
-                    if (cantidadHuevos - perasPorPlanta < 0) continue;
-                    cantidadHuevos -= perasPorPlanta;
-
-                    if (peralesInfectados >= plantasPorHectarea * cantidadHectareas) break;
+                    perasInfectadas += planta.Item1;
+                    cantidadHuevos -= planta.Item1;
+                    perasDañadasDelPeral = planta.Item1;
                 }
-                gananciaTotal = pesoTotalDePeras * precioPeraPorTonelada / 1000;
+                pesoPerasInfectadas += planta.Item2;
+                peralesInfectados += perasDañadasDelPeral / planta.Item1;
+                perasEnPlantas.Remove(planta);
+                if (peralesInfectados >= peralesTotales) break;
             }
 
-            hectareasInfectadas += peralesInfectados / plantasPorHectarea;
+            hectareasInfectadas += peralesInfectados / peralesPorHectarea;
 
             var pesoPerasSanas = pesoTotalDePeras - pesoPerasInfectadas;
             perasSanas = perasTotales - perasInfectadas;
 
-            if (pesoPerasSanas < 0 || perasSanas < 0)
+            if (pesoPerasSanas < 0 || perasSanas < 0 || hectareasInfectadas >= cantidadHectareas || peralesInfectados >= peralesTotales)  // Todas las plantas infectadas
             {
+                perasSanas = 0;
                 pesoPerasSanas = 0;
                 pesoPerasInfectadas = pesoTotalDePeras;
-                perasSanas = 0;
                 perasInfectadas = perasTotales;
+                hectareasInfectadas = cantidadHectareas;
+                hectareasSanas = 0;
+                ResultadosPorGeneracion.Add(new ResultadosGeneracion()
+                {
+                    Generacion = generacion,
+                    Dias = (int)diaGeneracion,
+                    HectareasInfectadas = hectareasInfectadas,
+                    HectareasSanas = hectareasSanas,
+                    PerasSanas = perasSanas,
+                    PerasInfectadas = perasInfectadas,
+                    Ganancia = (pesoPerasSanas * precioPeraPorTonelada) / 1000,
+                    Perdida = (pesoPerasInfectadas * precioPeraPorTonelada) / 1000,
+                    CostoTratamientoQuimico = aplicarQuimicos ? costoQuimicoPorHectarea * hectareasInfectadas : 0,
+                    CostoTratamientoFeromonas = aplicarFeromonas ? costoFeromonasPorHectarea * hectareasInfectadas : 0
+                });
+                break;
             }
 
-            var ultimo = ResultadosPorGeneracion.LastOrDefault();
+            hectareasSanas = cantidadHectareas - hectareasInfectadas;
 
+            var ultimo = ResultadosPorGeneracion.LastOrDefault();
             ResultadosPorGeneracion.Add(new ResultadosGeneracion()
             {
                 Generacion = generacion,
                 Dias = (int)diaGeneracion,
                 HectareasInfectadas = hectareasInfectadas,
-                HectareasSanas = cantidadHectareas - hectareasInfectadas,
+                HectareasSanas = hectareasSanas,
                 PerasSanas = perasSanas,
                 PerasInfectadas = perasInfectadas,
                 Ganancia = (pesoPerasSanas * precioPeraPorTonelada) / 1000,
                 Perdida = (pesoPerasInfectadas * precioPeraPorTonelada) / 1000,
-                CostoTratamientoQuimico = costoQuimicoPorHectarea * hectareasInfectadas,
-                CostoTratamientoFeromonas = costoFeromonasPorHectarea * hectareasInfectadas
+                CostoTratamientoQuimico = aplicarQuimicos ? costoQuimicoPorHectarea * hectareasInfectadas : 0,
+                CostoTratamientoFeromonas = aplicarFeromonas ? costoFeromonasPorHectarea * hectareasInfectadas : 0
             });
-
-            if (hectareasInfectadas < cantidadHectareas) continue;
-
-            hectareasInfectadas = cantidadHectareas;
-            perasInfectadas = perasTotales;
-            if (ultimo is not null)
-            {
-                ultimo.HectareasInfectadas = cantidadHectareas;
-                ultimo.PerasInfectadas = perasTotales;
-            }
-            break;
         }
 
         var resultadoSimulacion = new ResultadoSimulacion(ResultadosPorGeneracion)
