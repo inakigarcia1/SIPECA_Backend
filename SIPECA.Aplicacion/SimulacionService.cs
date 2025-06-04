@@ -118,6 +118,11 @@ public class SimulacionService
             var pesoPerasSanas = pesoTotalDePeras - pesoPerasInfectadas;
             perasSanas = perasTotales - perasInfectadas;
 
+            var ultimo = ResultadosPorGeneracion.LastOrDefault();
+
+            double costoTratamientoQuimico = ultimo is null ? costoQuimicoPorHectarea * cantidadHectareas : ultimo.CostoTratamientoQuimico + costoQuimicoPorHectarea * cantidadHectareas;
+            double costoFeromonas = ultimo is null ? costoFeromonasPorHectarea * cantidadHectareas : ultimo.CostoTratamientoFeromonas + costoFeromonasPorHectarea * cantidadHectareas;
+
             if (pesoPerasSanas < 0 || perasSanas < 0 || hectareasInfectadas >= cantidadHectareas || peralesInfectados >= peralesTotales)  // Todas las plantas infectadas
             {
                 perasSanas = 0;
@@ -136,15 +141,14 @@ public class SimulacionService
                     PerasInfectadas = perasInfectadas,
                     Ganancia = (pesoPerasSanas * precioPeraPorTonelada) / 1000,
                     Perdida = (pesoPerasInfectadas * precioPeraPorTonelada) / 1000,
-                    CostoTratamientoQuimico = aplicarQuimicos ? costoQuimicoPorHectarea * hectareasInfectadas : 0,
-                    CostoTratamientoFeromonas = aplicarFeromonas ? costoFeromonasPorHectarea * hectareasInfectadas : 0
+                    CostoTratamientoQuimico = aplicarQuimicos ? costoTratamientoQuimico : 0,
+                    CostoTratamientoFeromonas = aplicarFeromonas ? costoFeromonas : 0
                 });
                 break;
             }
 
             hectareasSanas = cantidadHectareas - hectareasInfectadas;
 
-            var ultimo = ResultadosPorGeneracion.LastOrDefault();
             ResultadosPorGeneracion.Add(new ResultadosGeneracion()
             {
                 Generacion = generacion,
@@ -155,8 +159,8 @@ public class SimulacionService
                 PerasInfectadas = perasInfectadas,
                 Ganancia = (pesoPerasSanas * precioPeraPorTonelada) / 1000,
                 Perdida = (pesoPerasInfectadas * precioPeraPorTonelada) / 1000,
-                CostoTratamientoQuimico = aplicarQuimicos ? costoQuimicoPorHectarea * hectareasInfectadas : 0,
-                CostoTratamientoFeromonas = aplicarFeromonas ? costoFeromonasPorHectarea * hectareasInfectadas : 0
+                CostoTratamientoQuimico = aplicarQuimicos ? costoTratamientoQuimico : 0,
+                CostoTratamientoFeromonas = aplicarFeromonas ? costoFeromonas : 0
             });
         }
 
